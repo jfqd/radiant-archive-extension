@@ -18,7 +18,7 @@ class ArchiveFinder
       new do |method, options|
         start = Time.local(year)
         finish = start.next_year
-        add_condition(options, "published_at >= ? and published_at < ?", start, finish)
+        add_condition(options, "published_at >= ? and published_at < ?", local_to_utc(start), local_to_utc(finish))
         finder.find(method, options)
       end
     end
@@ -27,7 +27,7 @@ class ArchiveFinder
       new do |method, options|
         start = Time.local(year, month)
         finish = start.next_month
-        add_condition(options, "published_at >= ? and published_at < ?", start, finish)
+        add_condition(options, "published_at >= ? and published_at < ?", local_to_utc(start), local_to_utc(finish))
         finder.find(method, options)
       end
     end
@@ -36,7 +36,7 @@ class ArchiveFinder
       new do |method, options|
         start = Time.local(year, month, day)
         finish = start.tomorrow
-        add_condition(options, "published_at >= ? and published_at < ?", start, finish)
+        add_condition(options, "published_at >= ? and published_at < ?", local_to_utc(start), local_to_utc(finish))
         finder.find(method, options)
       end
     end
@@ -54,6 +54,10 @@ class ArchiveFinder
         conditions = concat_conditions(old, condition)
         options[:conditions] = conditions
         options
+      end
+      
+      def local_to_utc(time, dst=true)
+        Time.zone.local_to_utc(time, dst)
       end
       
   end
